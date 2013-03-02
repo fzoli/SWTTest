@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TabItem;
 
-public class SettingsWindow {
+public class ConfigEditorWindow {
 
 	protected Shell shell;
 
@@ -26,7 +26,7 @@ public class SettingsWindow {
 	 */
 	public static void main(String[] args) {
 		try {
-			SettingsWindow window = new SettingsWindow();
+			ConfigEditorWindow window = new ConfigEditorWindow();
 			window.open();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -11,7 +11,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Button;
 
-public class VehicleSelectionWindow {
+public class VehicleChooserWindow {
 
 	protected Shell shell;
 
@@ -21,7 +21,7 @@ public class VehicleSelectionWindow {
 	 */
 	public static void main(String[] args) {
 		try {
-			VehicleSelectionWindow window = new VehicleSelectionWindow();
+			VehicleChooserWindow window = new VehicleChooserWindow();
 			window.open();
 		} catch (Exception e) {
 			e.printStackTrace();
