@@ -97,7 +97,7 @@ public class ButtonComposite extends Composite {
 		getParent().addListener(SWT.Resize, unmaximizeListener);
 	}
 	
-	public List<Button> getButtons() {
+	public List<Button> getButtonList() {
 		return btns;
 	}
 	

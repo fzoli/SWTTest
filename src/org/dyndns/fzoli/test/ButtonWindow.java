@@ -53,7 +53,7 @@ public class ButtonWindow {
 		shell = new Shell();
 		shell.setText("Panel test");
 		shell.setLayout(new FillLayout(SWT.VERTICAL | SWT.HORIZONTAL));
-		final List<Button> btns = new ButtonComposite(shell, SWT.NONE, "Li-Ion", "NiZn", "NiMh").getButtons();
+		final List<Button> btns = new ButtonComposite(shell, SWT.NONE, "Li-Ion", "NiZn", "NiMh").getButtonList();
 		shell.pack();
 		SWTUtils.setLocationToCenter(shell);
 		btns.get(0).addListener(SWT.Selection, new Listener() {

@@ -1,8 +1,15 @@
 package org.dyndns.fzoli.test;
 
 import org.dyndns.fzoli.swt.ButtonComposite;
+import org.dyndns.fzoli.swt.SWTUtils;
+import org.dyndns.fzoli.test.res.R;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.TabFolder;
@@ -25,7 +32,7 @@ public class SettingsWindow {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Open the window.
 	 */
@@ -46,8 +53,7 @@ public class SettingsWindow {
 	 */
 	protected void createContents() {
 		shell = new Shell();
-		shell.setSize(450, 300);
-		shell.setText("SWT Application");
+		shell.setText("Connection settings");
 		shell.setLayout(new GridLayout(1, false));
 		
 		GridData gdTab = new GridData();
@@ -59,19 +65,73 @@ public class SettingsWindow {
 		TabFolder tabFolder = new TabFolder(shell, SWT.NONE);
 		tabFolder.setLayoutData(gdTab);
 		
-		TabItem tbtm1 = new TabItem(tabFolder, SWT.NONE);
-		tbtm1.setText("Item 1");
+		Composite composite1 = new Composite(tabFolder, SWT.NONE);
+		composite1.setLayout(new GridLayout(2, false));
 		
-		TabItem tbtm2 = new TabItem(tabFolder, SWT.NONE);
-		tbtm2.setText("Item 2");
+		TabItem tbtm1 = new TabItem(tabFolder, SWT.NO_FOCUS);
+		tbtm1.setControl(composite1);
+		tbtm1.setText("Path");
+		
+		GridData gdMessage1 = new GridData();
+		gdMessage1.horizontalSpan = 2;
+		gdMessage1.horizontalAlignment = SWT.FILL;
+		gdMessage1.grabExcessHorizontalSpace = true;
+		gdMessage1.grabExcessVerticalSpace = true;
+		gdMessage1.widthHint = 250;
+		
+		Label lblMessage1 = new Label(composite1, SWT.WRAP);
+		lblMessage1.setLayoutData(gdMessage1);
+		lblMessage1.setText("In this tab you can set the path of the Bridge connection.");
+		Label lblAddress = new Label(composite1, SWT.NONE);
+		lblAddress.setText("Server host:");
+		
+		GridData gdAddress = new GridData();
+		gdAddress.horizontalAlignment = SWT.FILL;
+		gdAddress.grabExcessVerticalSpace = true;
+		
+		Text txtAddress = new Text(composite1, SWT.BORDER);
+		txtAddress.setLayoutData(gdAddress);
+		
+		Label lblPort = new Label(composite1, SWT.NONE);
+		lblPort.setText("Server port:");
+		
+		GridData gdPort = new GridData();
+		gdPort.horizontalAlignment = SWT.FILL;
+		gdPort.grabExcessVerticalSpace = true;
+		
+		Text txtPort = new Text(composite1, SWT.BORDER);
+		txtPort.setLayoutData(gdPort);
+		
+		Composite cmpFiller = new Composite(tabFolder, SWT.NONE);
+		cmpFiller.setLayout(new GridLayout(1, false));
+		
+		GridData gdFiller = new GridData();
+		gdFiller.heightHint = 185;
+		
+		new Label(cmpFiller, SWT.NONE).setLayoutData(gdFiller);
+		
+		TabItem tbtm2 = new TabItem(tabFolder, SWT.NO_FOCUS);
+		tbtm2.setControl(cmpFiller);
+		tbtm2.setText("Security");
 		
 		GridData gdButtons = new GridData();
 		gdButtons.horizontalAlignment = SWT.FILL;
-		gdTab.grabExcessHorizontalSpace = true;
 		
 		ButtonComposite cmpButtons = new ButtonComposite(shell, SWT.NONE, "Help", "Cancel", "OK");
 		cmpButtons.setLayoutData(gdButtons);
 		
+		cmpButtons.getButtonList().get(1).addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				shell.dispose();
+			}
+			
+		});
+		
+		shell.pack();
+		SWTUtils.setLocationToCenter(shell);
+		shell.setImage(R.getIconImage());
 	}
 
 }

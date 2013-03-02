@@ -60,7 +60,6 @@ public class VehicleSelectionWindow {
 		
 		GridData gridDataMessage = new GridData();
 		gridDataMessage.horizontalAlignment = SWT.CENTER;
-		gridDataMessage.grabExcessHorizontalSpace = true;
 		
 		Label lblMessage = new Label(shell, SWT.NONE);
 		lblMessage.setText("Válasszon járművet a listából.");
@@ -77,7 +76,6 @@ public class VehicleSelectionWindow {
 		
 		GridData gridDataSelect = new GridData();
 		gridDataSelect.horizontalAlignment = SWT.CENTER;
-		gridDataSelect.grabExcessHorizontalSpace = true;
 		
 		Button btnSelect = new Button(shell, SWT.NONE);
 		btnSelect.setText("Kiválasztás");
