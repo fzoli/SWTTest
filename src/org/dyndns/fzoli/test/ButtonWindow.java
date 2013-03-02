@@ -51,9 +51,9 @@ public class ButtonWindow {
 	 */
 	protected void createContents() {
 		shell = new Shell();
-		shell.setText("Gombpanel");
+		shell.setText("Panel test");
 		shell.setLayout(new FillLayout(SWT.VERTICAL | SWT.HORIZONTAL));
-		final List<Button> btns = new ButtonComposite(shell, SWT.NONE, "Asd", "Sakál", "Madár").getButtons();
+		final List<Button> btns = new ButtonComposite(shell, SWT.NONE, "Li-Ion", "NiZn", "NiMh").getButtons();
 		shell.pack();
 		SWTUtils.setLocationToCenter(shell);
 		btns.get(0).addListener(SWT.Selection, new Listener() {
@@ -61,28 +61,28 @@ public class ButtonWindow {
 			@Override
 			public void handleEvent(Event event) {
 				Button bt = btns.get(1);
-				bt.setText(bt.getText().equals("Sakál") ? "Nesze neked" : "Sakál");
+				bt.setText(bt.getText().equals("NiZn") ? "Nickel Zinc" : "NiZn");
 			}
 			
 		});
 		
 		Shell shell2 = new Shell(SWT.SHELL_TRIM & ~SWT.RESIZE);
 		shell2.setLayout(new FillLayout());
-		shell2.setText("Másik teszt");
+		shell2.setText("Test dialog");
 		Button bt = new Button(shell2, SWT.NONE);
-		bt.setText("Teszt");
+		bt.setText("Click");
 		bt.addListener(SWT.Selection, new Listener() {
 
 			@Override
 			public void handleEvent(Event event) {
 				Button bt = btns.get(0);
-				bt.setText(bt.getText().equals("Asd") ? "Hihihi" : "Asd");
+				bt.setText(bt.getText().equals("Li-Ion") ? "Lithium-ion" : "Li-Ion");
 			}
 			
 		});
 		shell2.layout();
 		shell2.pack();
-		shell2.setLocation(shell.getLocation().x, shell.getLocation().y + shell.computeSize(-1, -1).y);
+		shell2.setLocation(shell.getLocation().x, shell.getLocation().y + shell.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		shell2.open();
 	}
 

@@ -25,13 +25,15 @@ public class ButtonComposite extends Composite {
 		
 		@Override
 		public void handleEvent(Event event) {
-			Button bt = (Button) event.widget;
-			int index = btns.indexOf(bt);
-			String newText = bt.getText();
-			String oldText = texts.get(index);
-			texts.set(index, newText);
-			if (oldText != null && !oldText.equals(newText)) {
-				resizeButtons();
+			for (int i = 0; i < btns.size(); i++) {
+				Button bt = btns.get(i);
+				String oldText = texts.get(i);
+				String newText = bt.getText();
+				if (oldText == null || !oldText.equals(newText)) {
+					texts.set(i, newText);
+					resizeButtons();
+					break;
+				}
 			}
 		}
 		
