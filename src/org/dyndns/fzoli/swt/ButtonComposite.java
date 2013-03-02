@@ -2,16 +2,16 @@ package org.dyndns.fzoli.swt;
 
 import java.util.Arrays;
 import java.util.List;
-
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
+import org.dyndns.fzoli.util.UnremovableList;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 public class ButtonComposite extends Composite {
 
@@ -99,8 +99,8 @@ public class ButtonComposite extends Composite {
 		Button btnRight = new Button(this, SWT.NONE);
 		btnRight.setLayoutData(gridDataRight);
 		btnRight.setText(rightText == null ? "" : rightText);
-
-		BTNS = Arrays.asList(btnLeft, btnCenter, btnRight);
+		
+		BTNS = new UnremovableList<Button>(Arrays.asList(btnLeft, btnCenter, btnRight));
 		DATAS = Arrays.asList(gridDataLeft, gridDataCenter, gridDataRight);
 		TEXTS = Arrays.asList(leftText, centerText, rightText);
 		resizeButtons();
@@ -112,7 +112,7 @@ public class ButtonComposite extends Composite {
 		getParent().addListener(SWT.Resize, LST_DEMAXIMIZE);
 	}
 	
-	public List<Button> getButtonList() {
+	public List<? extends Button> getButtonList() {
 		return BTNS;
 	}
 	

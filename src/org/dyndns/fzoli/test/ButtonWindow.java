@@ -1,6 +1,6 @@
 package org.dyndns.fzoli.test;
-import java.util.List;
 
+import java.util.List;
 import org.dyndns.fzoli.swt.ButtonComposite;
 import org.dyndns.fzoli.swt.SWTUtils;
 import org.eclipse.swt.SWT;
@@ -10,8 +10,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-
-
 
 public class ButtonWindow {
 
@@ -53,7 +51,7 @@ public class ButtonWindow {
 		shell = new Shell();
 		shell.setText("Panel test");
 		shell.setLayout(new FillLayout(SWT.VERTICAL | SWT.HORIZONTAL));
-		final List<Button> btns = new ButtonComposite(shell, SWT.NONE, "Li-Ion", "NiZn", "NiMh").getButtonList();
+		final List<? extends Button> btns = new ButtonComposite(shell, SWT.NONE, "Li-Ion", "NiZn", "NiMh").getButtonList();
 		shell.pack();
 		SWTUtils.setLocationToCenter(shell);
 		btns.get(0).addListener(SWT.Selection, new Listener() {
@@ -65,7 +63,6 @@ public class ButtonWindow {
 			}
 			
 		});
-		
 		Shell shell2 = new Shell(SWT.SHELL_TRIM & ~SWT.RESIZE);
 		shell2.setLayout(new FillLayout());
 		shell2.setText("Test dialog");
