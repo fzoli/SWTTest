@@ -58,7 +58,10 @@ public class ButtonComposite extends Composite {
 	 */
 	public ButtonComposite(Shell parent, int style, String leftText, String centerText, String rightText) {
 		super(parent, style);
-		setLayout(new GridLayout(3, false));
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		setLayout(layout);
 		
 		GridData gridDataLeft = new GridData();
 		gridDataLeft.grabExcessHorizontalSpace = true;
