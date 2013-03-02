@@ -106,13 +106,17 @@ public class SettingsWindow {
 		cmpFiller.setLayout(new GridLayout(1, false));
 		
 		GridData gdFiller = new GridData();
-		gdFiller.heightHint = 185;
+		gdFiller.minimumHeight = 185;
+		gdFiller.horizontalAlignment = SWT.FILL;
+		gdFiller.verticalAlignment = SWT.FILL;
+		gdFiller.grabExcessHorizontalSpace = true;
+		gdFiller.grabExcessVerticalSpace = true;
 		
-		new Label(cmpFiller, SWT.NONE).setLayoutData(gdFiller);
+		new Text(cmpFiller, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP | SWT.BORDER).setLayoutData(gdFiller);
 		
 		TabItem tbtm2 = new TabItem(tabFolder, SWT.NO_FOCUS);
 		tbtm2.setControl(cmpFiller);
-		tbtm2.setText("Security");
+		tbtm2.setText("Input");
 		
 		GridData gdButtons = new GridData();
 		gdButtons.horizontalAlignment = SWT.FILL;
