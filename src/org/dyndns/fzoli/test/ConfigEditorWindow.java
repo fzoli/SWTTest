@@ -1,30 +1,40 @@
 package org.dyndns.fzoli.test;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.dyndns.fzoli.swt.ButtonComposite;
 import org.dyndns.fzoli.swt.SWTUtils;
 import org.dyndns.fzoli.test.res.R;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
+
+import com.richclientgui.toolbox.validation.ValidatingField;
+import com.richclientgui.toolbox.validation.ValidationToolkit;
+import com.richclientgui.toolbox.validation.converter.IntegerStringConverter;
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
+import com.richclientgui.toolbox.validation.validator.IFieldValidator;
 
 public class ConfigEditorWindow {
 
 	private static final Pattern PT_ADDRESS_1 = Pattern.compile("^[a-z\\d]{0,1}$", Pattern.CASE_INSENSITIVE);
 	private static final Pattern PT_ADDRESS_2 = Pattern.compile("^[a-z\\d]{1}[\\w\\.\\d]{0,18}[a-z\\d]{1}$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern PT_PORT = Pattern.compile("^[1-9]{1}[\\d]{0,5}$", Pattern.CASE_INSENSITIVE);
+	
+	private final Map<Text, String> VALUES = new HashMap<Text, String>();
 	
 	protected Shell shell;
-	private String address;
 	
 	/**
 	 * Launch the application.
@@ -53,6 +63,57 @@ public class ConfigEditorWindow {
 			}
 		}
 	}
+	
+	private ValidatingField<Integer> vfPort;
+	private ValidatingField<String> vfAddress;
+	
+	private IFieldValidator<String> fvAddress = new IFieldValidator<String>() {
+		
+		@Override
+		public boolean warningExist(String s) {
+			return s.isEmpty();
+		}
+		
+		@Override
+		public boolean isValid(String s) {
+			return s.isEmpty() || PT_ADDRESS_2.matcher(s).matches();
+		}
+		
+		@Override
+		public String getWarningMessage() {
+			return "A mező kitöltése kötelező.\nA host minimum 2 karakter.";
+		}
+		
+		@Override
+		public String getErrorMessage() {
+			return vfAddress != null && vfAddress.getContents().length() < 2 ? "A host minimum 2 karakter." : "A host IP cím vagy domain cím lehet.";
+		}
+		
+	};
+	
+	private IFieldValidator<Integer> fvPort = new IFieldValidator<Integer>() {
+		
+		@Override
+		public boolean warningExist(Integer i) {
+			return i == null;
+		}
+		
+		@Override
+		public boolean isValid(Integer i) {
+			return (vfPort != null && ((Text)vfPort.getControl()).getText().isEmpty()) || i != null && i > 0 && i < 65536;
+		}
+		
+		@Override
+		public String getWarningMessage() {
+			return "A mező kitöltése kötelező.\nA port 1 és 65535 között lehet.";
+		}
+		
+		@Override
+		public String getErrorMessage() {
+			return "A port 1 és 65535 között lehet.";
+		}
+		
+	};
 	
 	/**
 	 * Create contents of the window.
@@ -92,21 +153,27 @@ public class ConfigEditorWindow {
 		lblAddress.setText("Server host:");
 		
 		GridData gdAddress = new GridData();
+		gdAddress.horizontalIndent = 4;
 		gdAddress.horizontalAlignment = SWT.FILL;
 		gdAddress.grabExcessVerticalSpace = true;
 		
-		final Text txtAddress = new Text(composite1, SWT.BORDER);
+		ValidationToolkit<String> vtAddress = new StringValidationToolkit(SWT.TOP | SWT.LEFT, 1, true);
+		vfAddress = vtAddress.createTextField(composite1, fvAddress, false, "localhost");
+		
+		final Text txtAddress = (Text) vfAddress.getControl();
 		txtAddress.setLayoutData(gdAddress);
 		
 		Label lblPort = new Label(composite1, SWT.NONE);
 		lblPort.setText("Server port:");
 		
 		GridData gdPort = new GridData();
+		gdPort.horizontalIndent = 4;
 		gdPort.horizontalAlignment = SWT.FILL;
 		gdPort.grabExcessVerticalSpace = true;
 		
-		Text txtPort = new Text(composite1, SWT.BORDER);
-		txtPort.setLayoutData(gdPort);
+		ValidationToolkit<Integer> vtPort = new ValidationToolkit<Integer>(new IntegerStringConverter(), SWT.TOP | SWT.LEFT, 1, true);
+		vfPort = vtPort.createTextField(composite1, fvPort, false, 8443);
+		vfPort.getControl().setLayoutData(gdPort);
 		
 		Composite cmpFiller = new Composite(tabFolder, SWT.NONE);
 		cmpFiller.setLayout(new GridLayout(1, false));
@@ -134,6 +201,7 @@ public class ConfigEditorWindow {
 
 			@Override
 			public void handleEvent(Event event) {
+				System.out.println("Address: " + txtAddress.getText());
 				shell.dispose();
 			}
 			
@@ -188,14 +256,17 @@ public class ConfigEditorWindow {
 			
 		});
 		
-		txtAddress.addListener(SWT.FocusIn, new Listener() {
+		Listener lFocusIn = new Listener() {
 			
 			@Override
 			public void handleEvent(Event event) {
-				address = txtAddress.getText();
+				Text t = (Text) event.widget;
+				VALUES.put(t, t.getText());
 			}
 			
-		});
+		};
+		
+		txtAddress.addListener(SWT.FocusIn, lFocusIn);
 		
 		txtAddress.addListener(SWT.FocusOut, new Listener() {
 			
@@ -204,11 +275,39 @@ public class ConfigEditorWindow {
 				String text = txtAddress.getText();
 				if (text.endsWith(".")) txtAddress.setText(text.substring(0, text.length() - 1));
 				if (PT_ADDRESS_2.matcher(text).matches()) txtAddress.setText(text.toLowerCase());
-				else txtAddress.setText(address);
+				else txtAddress.setText(VALUES.get(event.widget));
 			}
 			
 		});
 		
+		vfPort.getControl().addListener(SWT.Verify, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				try {
+					String text = SWTUtils.getText(event);
+					if (text.isEmpty()) return;
+					int number = Integer.parseInt(text);
+					if (number < 1 || number > 65535 || !PT_PORT.matcher(text).matches()) throw new Exception();
+				}
+				catch (Exception ex) {
+					event.doit = false;
+				}
+			}
+			
+		});
+		
+		vfPort.getControl().addListener(SWT.FocusIn, lFocusIn);
+		
+		vfPort.getControl().addListener(SWT.FocusOut, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				Text t = (Text) event.widget;
+				if (t.getText().isEmpty()) t.setText(VALUES.get(t));
+			}
+			
+		});
 	}
 
 }

@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="/home/zoli/Eclipse/eclipse/plugins/com.ibm.icu_4.4.2.v20110823.jar" sourcepath="/home/zoli/Eclipse/eclipse/plugins/com.ibm.icu.source_4.4.2.v20110823.jar"/>
 	<classpathentry kind="lib" path="/home/zoli/Eclipse/eclipse/plugins/org.eclipse.ui.forms_3.5.200.v20120705-114351.jar" sourcepath="/home/zoli/Eclipse/eclipse/plugins/org.eclipse.ui.forms.source_3.5.200.v20120705-114351.jar"/>
 	<classpathentry kind="lib" path="swing2swt.jar"/>
+	<classpathentry kind="lib" path="/home/zoli/Eclipse/Projects/SWTTest/lib/rcptoolbox.1.0.10.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
