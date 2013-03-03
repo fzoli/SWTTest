@@ -64,8 +64,7 @@ public class ConfigEditorWindow {
 		}
 	}
 	
-	private ValidatingField<Integer> vfPort;
-	private ValidatingField<String> vfAddress;
+	private Text txtAddress, txtPort;
 	
 	private IFieldValidator<String> fvAddress = new IFieldValidator<String>() {
 		
@@ -86,7 +85,7 @@ public class ConfigEditorWindow {
 		
 		@Override
 		public String getErrorMessage() {
-			return vfAddress != null && vfAddress.getContents().length() < 2 ? "A host minimum 2 karakter." : "A host IP cím vagy domain cím lehet.";
+			return txtAddress != null && txtAddress.getText().length() < 2 ? "A host minimum 2 karakter." : "A host IP cím vagy domain cím lehet.";
 		}
 		
 	};
@@ -100,7 +99,7 @@ public class ConfigEditorWindow {
 		
 		@Override
 		public boolean isValid(Integer i) {
-			return (vfPort != null && ((Text)vfPort.getControl()).getText().isEmpty()) || i != null && i > 0 && i < 65536;
+			return (txtPort != null && txtPort.getText().isEmpty()) || i != null && i > 0 && i < 65536;
 		}
 		
 		@Override
@@ -158,9 +157,9 @@ public class ConfigEditorWindow {
 		gdAddress.grabExcessVerticalSpace = true;
 		
 		ValidationToolkit<String> vtAddress = new StringValidationToolkit(SWT.TOP | SWT.LEFT, 1, true);
-		vfAddress = vtAddress.createTextField(composite1, fvAddress, false, "localhost");
+		ValidatingField<String> vfAddress = vtAddress.createTextField(composite1, fvAddress, false, "localhost");
 		
-		final Text txtAddress = (Text) vfAddress.getControl();
+		txtAddress = (Text) vfAddress.getControl();
 		txtAddress.setLayoutData(gdAddress);
 		
 		Label lblPort = new Label(composite1, SWT.NONE);
@@ -172,8 +171,10 @@ public class ConfigEditorWindow {
 		gdPort.grabExcessVerticalSpace = true;
 		
 		ValidationToolkit<Integer> vtPort = new ValidationToolkit<Integer>(new IntegerStringConverter(), SWT.TOP | SWT.LEFT, 1, true);
-		vfPort = vtPort.createTextField(composite1, fvPort, false, 8443);
-		vfPort.getControl().setLayoutData(gdPort);
+		ValidatingField<Integer> vfPort = vtPort.createTextField(composite1, fvPort, false, 8443);
+		
+		txtPort = (Text) vfPort.getControl();
+		txtPort.setLayoutData(gdPort);
 		
 		Composite cmpFiller = new Composite(tabFolder, SWT.NONE);
 		cmpFiller.setLayout(new GridLayout(1, false));
@@ -280,7 +281,7 @@ public class ConfigEditorWindow {
 			
 		});
 		
-		vfPort.getControl().addListener(SWT.Verify, new Listener() {
+		txtPort.addListener(SWT.Verify, new Listener() {
 			
 			@Override
 			public void handleEvent(Event event) {
@@ -297,14 +298,13 @@ public class ConfigEditorWindow {
 			
 		});
 		
-		vfPort.getControl().addListener(SWT.FocusIn, lFocusIn);
+		txtPort.addListener(SWT.FocusIn, lFocusIn);
 		
-		vfPort.getControl().addListener(SWT.FocusOut, new Listener() {
+		txtPort.addListener(SWT.FocusOut, new Listener() {
 			
 			@Override
 			public void handleEvent(Event event) {
-				Text t = (Text) event.widget;
-				if (t.getText().isEmpty()) t.setText(VALUES.get(t));
+				if (txtPort.getText().isEmpty()) txtPort.setText(VALUES.get(txtPort));
 			}
 			
 		});
