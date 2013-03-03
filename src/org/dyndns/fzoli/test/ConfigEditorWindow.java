@@ -20,8 +20,12 @@ import org.eclipse.swt.widgets.TabItem;
 
 public class ConfigEditorWindow {
 
+	private static final Pattern PT_ADDRESS_1 = Pattern.compile("^[a-z\\d]{0,1}$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern PT_ADDRESS_2 = Pattern.compile("^[a-z\\d]{1}[\\w\\.\\d]{0,18}[a-z\\d]{1}$", Pattern.CASE_INSENSITIVE);
+	
 	protected Shell shell;
-
+	private String address;
+	
 	/**
 	 * Launch the application.
 	 * @param args
@@ -49,9 +53,6 @@ public class ConfigEditorWindow {
 			}
 		}
 	}
-
-	private static final Pattern PT_ADDRESS_1 = Pattern.compile("^[a-z\\d]{0,1}$", Pattern.CASE_INSENSITIVE);
-	private static final Pattern PT_ADDRESS_2 = Pattern.compile("^[a-z\\d]{1}[\\w\\.\\d]{0,18}[a-z\\d]{1}$", Pattern.CASE_INSENSITIVE);
 	
 	/**
 	 * Create contents of the window.
@@ -187,15 +188,23 @@ public class ConfigEditorWindow {
 			
 		});
 		
+		txtAddress.addListener(SWT.FocusIn, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				address = txtAddress.getText();
+			}
+			
+		});
+		
 		txtAddress.addListener(SWT.FocusOut, new Listener() {
 			
 			@Override
 			public void handleEvent(Event event) {
 				String text = txtAddress.getText();
-				if (text.endsWith(".")) {
-					txtAddress.setText(text.substring(0, text.length() - 1));
-				}
-				txtAddress.setText(text.toLowerCase());
+				if (text.endsWith(".")) txtAddress.setText(text.substring(0, text.length() - 1));
+				if (PT_ADDRESS_2.matcher(text).matches()) txtAddress.setText(text.toLowerCase());
+				else txtAddress.setText(address);
 			}
 			
 		});
