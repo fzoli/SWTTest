@@ -1,5 +1,7 @@
 package org.dyndns.fzoli.test;
 
+import java.util.regex.Pattern;
+
 import org.dyndns.fzoli.swt.ButtonComposite;
 import org.dyndns.fzoli.swt.SWTUtils;
 import org.dyndns.fzoli.test.res.R;
@@ -48,6 +50,9 @@ public class ConfigEditorWindow {
 		}
 	}
 
+	private static final Pattern PT_ADDRESS_1 = Pattern.compile("^[a-z\\d]{0,1}$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern PT_ADDRESS_2 = Pattern.compile("^[a-z\\d]{1}[\\w\\.\\d]{0,18}[a-z\\d]{1}$", Pattern.CASE_INSENSITIVE);
+	
 	/**
 	 * Create contents of the window.
 	 */
@@ -89,7 +94,7 @@ public class ConfigEditorWindow {
 		gdAddress.horizontalAlignment = SWT.FILL;
 		gdAddress.grabExcessVerticalSpace = true;
 		
-		Text txtAddress = new Text(composite1, SWT.BORDER);
+		final Text txtAddress = new Text(composite1, SWT.BORDER);
 		txtAddress.setLayoutData(gdAddress);
 		
 		Label lblPort = new Label(composite1, SWT.NONE);
@@ -136,6 +141,65 @@ public class ConfigEditorWindow {
 		shell.pack();
 		SWTUtils.setLocationToCenter(shell);
 		shell.setImage(R.getIconImage());
+		
+		txtAddress.addListener(SWT.Verify, new Listener() {
+			
+			boolean skip = false;
+			
+			@Override
+			public void handleEvent(Event event) {
+				if (skip) return;
+				String text = SWTUtils.getText(event);
+				if (text.length() < 2) {
+					if (!PT_ADDRESS_1.matcher(text).matches()) event.doit = false;
+				}
+				else {
+					String subBefText = SWTUtils.getText(event, true, false);
+					String subAftText = SWTUtils.getText(event, false, true);
+					if (subBefText.endsWith("..") || subAftText.startsWith("..")) {
+						event.doit = false;
+						return;
+					}
+					boolean remove = SWTUtils.isRemove(event);
+					boolean befDotEnd = subBefText.endsWith(".");
+					boolean aftDotEnd = subAftText.endsWith(".");
+					if (!subAftText.equals(".") && aftDotEnd) {
+						skip = true;
+						text = text.substring(0, text.length() - 1);
+						txtAddress.setText(text);
+						txtAddress.setSelection(event.start + (remove ? 0 : 1));
+						skip = false;
+						event.doit = false;
+						return;
+					}
+					if (remove && (befDotEnd || subBefText.isEmpty()) && subAftText.startsWith(".")) {
+						event.doit = false;
+						skip = true;
+						txtAddress.setText(subBefText + subAftText.substring(1));
+						txtAddress.setSelection(event.start - 1);
+						skip = false;
+						return;
+					}
+					if (befDotEnd && (aftDotEnd || subAftText.isEmpty())) return;
+					if (!PT_ADDRESS_2.matcher(text).matches()) event.doit = false;
+				}
+			}
+			
+		});
+		
+		txtAddress.addListener(SWT.FocusOut, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				String text = txtAddress.getText();
+				if (text.endsWith(".")) {
+					txtAddress.setText(text.substring(0, text.length() - 1));
+				}
+				txtAddress.setText(text.toLowerCase());
+			}
+			
+		});
+		
 	}
 
 }
