@@ -40,7 +40,7 @@ public class SWTUtils {
 		if (isRemove(event)) {
 			text = (subBefore ? text.substring(0, event.start) : "") + (subAfter ? text.substring(event.start + 1) : "");
 		}
-		else if (event.character != '\0') {
+		else if (event.character != '\0' && event.character != '\r' && event.character != '\t') {
 			text = (subBefore ? text.substring(0, event.start) : "") + event.character + (subAfter ? text.substring(event.start) : "");
 		}
 		return text;

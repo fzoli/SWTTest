@@ -80,12 +80,12 @@ public class ConfigEditorWindow {
 		
 		@Override
 		public String getWarningMessage() {
-			return "A mező kitöltése kötelező.\nA host minimum 2 karakter.";
+			return "A mező kitöltése kötelező.\nA cím minimum 2 karakter.";
 		}
 		
 		@Override
 		public String getErrorMessage() {
-			return txtAddress != null && txtAddress.getText().length() < 2 ? "A host minimum 2 karakter." : "A host IP cím vagy domain cím lehet.";
+			return txtAddress != null && txtAddress.getText().length() < 2 ? "A cím minimum 2 karakter." : "A cím IP-cím vagy domain lehet.";
 		}
 		
 	};
@@ -119,7 +119,7 @@ public class ConfigEditorWindow {
 	 */
 	protected void createContents() {
 		shell = new Shell();
-		shell.setText("Connection settings");
+		shell.setText("Kapcsolatbeállítás");
 		shell.setLayout(new GridLayout(1, false));
 		
 		GridData gdTab = new GridData();
@@ -136,7 +136,7 @@ public class ConfigEditorWindow {
 		
 		TabItem tbtm1 = new TabItem(tabFolder, SWT.NO_FOCUS);
 		tbtm1.setControl(composite1);
-		tbtm1.setText("Path");
+		tbtm1.setText("Útvonal");
 		
 		GridData gdMessage1 = new GridData();
 		gdMessage1.horizontalSpan = 2;
@@ -147,9 +147,9 @@ public class ConfigEditorWindow {
 		
 		Label lblMessage1 = new Label(composite1, SWT.WRAP);
 		lblMessage1.setLayoutData(gdMessage1);
-		lblMessage1.setText("In this tab you can set the path of the Bridge connection.");
+		lblMessage1.setText("Ezen a lapfülen állíthatja be a Híd szervernek az elérési útvonalát.");
 		Label lblAddress = new Label(composite1, SWT.NONE);
-		lblAddress.setText("Server host:");
+		lblAddress.setText("Szerver cím:");
 		
 		GridData gdAddress = new GridData();
 		gdAddress.horizontalIndent = 4;
@@ -163,7 +163,7 @@ public class ConfigEditorWindow {
 		txtAddress.setLayoutData(gdAddress);
 		
 		Label lblPort = new Label(composite1, SWT.NONE);
-		lblPort.setText("Server port:");
+		lblPort.setText("Szerver port:");
 		
 		GridData gdPort = new GridData();
 		gdPort.horizontalIndent = 4;
@@ -190,19 +190,18 @@ public class ConfigEditorWindow {
 		
 		TabItem tbtm2 = new TabItem(tabFolder, SWT.NO_FOCUS);
 		tbtm2.setControl(cmpFiller);
-		tbtm2.setText("Input");
+		tbtm2.setText("Bevitel");
 		
 		GridData gdButtons = new GridData();
 		gdButtons.horizontalAlignment = SWT.FILL;
 		
-		ButtonComposite cmpButtons = new ButtonComposite(shell, SWT.NONE, "Help", "Cancel", "OK");
+		ButtonComposite cmpButtons = new ButtonComposite(shell, SWT.NONE, "Súgó", "Mégse", "OK");
 		cmpButtons.setLayoutData(gdButtons);
 		
 		cmpButtons.getButtonList().get(1).addListener(SWT.Selection, new Listener() {
 
 			@Override
 			public void handleEvent(Event event) {
-				System.out.println("Address: " + txtAddress.getText());
 				shell.dispose();
 			}
 			
@@ -257,7 +256,7 @@ public class ConfigEditorWindow {
 			
 		});
 		
-		Listener lFocusIn = new Listener() {
+		final Listener lFocusIn = new Listener() {
 			
 			@Override
 			public void handleEvent(Event event) {
@@ -267,16 +266,30 @@ public class ConfigEditorWindow {
 			
 		};
 		
-		txtAddress.addListener(SWT.FocusIn, lFocusIn);
-		
-		txtAddress.addListener(SWT.FocusOut, new Listener() {
+		final Listener lAddressOut = new Listener() {
 			
 			@Override
 			public void handleEvent(Event event) {
-				String text = txtAddress.getText();
-				if (text.endsWith(".")) txtAddress.setText(text.substring(0, text.length() - 1));
+				String text = txtAddress.getText().trim();
+				if (text.endsWith(".")) txtAddress.setText(text = text.substring(0, text.length() - 1));
 				if (PT_ADDRESS_2.matcher(text).matches()) txtAddress.setText(text.toLowerCase());
 				else txtAddress.setText(VALUES.get(event.widget));
+				txtAddress.setSelection(text.length());
+			}
+			
+		};
+		
+		txtAddress.addListener(SWT.FocusIn, lFocusIn);
+		
+		txtAddress.addListener(SWT.FocusOut, lAddressOut);
+		
+		txtAddress.addListener(SWT.KeyDown, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				if (event.character == SWT.CR) {
+					lAddressOut.handleEvent(event);
+				}
 			}
 			
 		});
@@ -298,16 +311,30 @@ public class ConfigEditorWindow {
 			
 		});
 		
-		txtPort.addListener(SWT.FocusIn, lFocusIn);
-		
-		txtPort.addListener(SWT.FocusOut, new Listener() {
+		final Listener lPortOut = new Listener() {
 			
 			@Override
 			public void handleEvent(Event event) {
 				if (txtPort.getText().isEmpty()) txtPort.setText(VALUES.get(txtPort));
+				txtPort.setSelection(txtPort.getText().length());
+			}
+			
+		};
+		
+		txtPort.addListener(SWT.KeyDown, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				if (event.character == SWT.CR) {
+					lPortOut.handleEvent(event);
+				}
 			}
 			
 		});
+		
+		txtPort.addListener(SWT.FocusIn, lFocusIn);
+		
+		txtPort.addListener(SWT.FocusOut, lPortOut);
 	}
 
 }
